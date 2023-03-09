@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include <tchar.h>
 #include <string>
 #include <math.h>
 #include <iostream>
@@ -13,7 +12,8 @@
 // 20~23 共4bit 记录闰月的月份，如果没有闰月为0
 
 using namespace std;
-
+static const string TIANGAN = "甲乙丙丁戊己庚辛壬癸";
+static const string DIZHI = "子丑寅卯辰巳午未申酉戌亥";
 static const unsigned int BaseData[199] = {
 
     0x04AE53, 0x0A5748, 0x5526BD, 0x0D2650, 0x0D9544,
@@ -78,6 +78,22 @@ static const unsigned int BaseData[199] = {
 
 };
 
+typedef struct structGanZhiDate 
+{
+    string gzYear = "";
+    string gzMonth = "";
+    string gzDay = "";
+    string gzHour = "";
+    string gzMin = "";
+    string gzSec = "";
+    int year = 0;
+    int month = 0;
+    int day = 0;
+    int hour = 0;
+    int min = 0;
+    int sec = 0;
+} gzDate;
+
 typedef struct structDate
 {
     // 农历部分结构
@@ -137,6 +153,8 @@ public:
 
     bool IsLeapYear(int year); // 判断给定的年份是不是闰年
 
+    gzDate* GetGanzhiFormat(Date _cnDate); 
+
     string cn24Days[24] =
         {
             "小寒", "大寒", "立春", "雨水",
@@ -181,4 +199,9 @@ protected:
     cnDate GetLunarPart(int yyyy, int mm, int dd); // 公历转农历
 
     int *GetNow();
+
+    int* GetMonthGZ(Date pDate);
+    int* GetDayGZ(Date pDate);
+
+    
 };

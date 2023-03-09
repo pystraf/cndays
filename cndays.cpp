@@ -441,6 +441,72 @@ int CCnDays::GetDaysOfMonth(int year, int month)
     return DaysOfMonth[month];
 }
 
+/**
+甲己之年丙作首，
+乙庚之岁戊为头，
+丙辛岁首寻庚起，
+丁壬壬位顺行流，
+若言戊癸何方发，
+甲寅之上好追求。
+*/
+int* CCnDays::GetMonthGZ(Date pDate) {
+    string cnYear = pDate.cnYear;
+    string cnYearGan = cnYear.substr(0, 3); //汉字是unicode编码，宽度为3
+    int pos = TIANGAN.find(cnYearGan);
+    pos /= 3; //unicode 宽度
+    //天干年月对应表，年份为天干，从0开始计数
+    int _m = pDate.month; //农历二月
+    int map[10] = {
+        2,
+        4,
+        6,
+        8,
+        0,
+        2,
+        4,
+        6,
+        8,
+        0
+    };
+    int g_month_index = map[pos] + _m - 1;
+    int z_month = pDate.month + 2 % 12 - 1;
+    int * ret = (int*)malloc(2*sizeof(int));
+    ret[0] = g_month_index;
+    ret[1] = z_month;
+    return ret;
+}
+
+int* CCnDays::GetDayGZ(Date date)
+{
+    int year = date.year;
+    int temp = ((year - 1)*5 + (year-1) / 4 + 31+ 28 + 9 )%60;
+    int gan = temp % 10;
+    int zhi = temp % 12;
+    int *res = (int*)malloc(2*sizeof(int));
+    res[0] = gan - 1;
+    res[1] = zhi - 1;
+    return res;
+}
+
+gzDate* CCnDays::GetGanzhiFormat(Date date)
+{
+    gzDate *gz = new gzDate;
+    int* m = GetMonthGZ(date);
+    int mgan = m[0];
+    int mzhi = m[1];
+    string smgan = TIANGAN.substr(mgan * 3, 3);
+    string smzhi = DIZHI.substr(mzhi * 3, 3);
+    int* d = GetDayGZ(date);
+    int dgan = d[0];
+    int dzhi = d[1];
+    string sdgan = TIANGAN.substr(dgan * 3, 3);
+    string sdzhi = DIZHI.substr(dzhi * 3, 3);
+    gz->gzYear = date.cnYear.substr(0, 6);
+    gz->gzMonth = smgan + smzhi;
+    gz->gzDay = sdgan + sdzhi;
+    return gz;
+}
+
 int *GetNow()
 {
     time_t now;
@@ -470,7 +536,9 @@ int main(int argc, char **argv)
         month = today[1];
         day = today[2];
     }
-    structDate lunar = cndays->GetLunar(year, month, day);
-    cout << lunar.cnYear << lunar.cnMonth << lunar.cnDay;
+    cnDate lunar = cndays->GetLunar(year, month, day);
+    gzDate *gz = cndays->GetGanzhiFormat(lunar);
+    cout << lunar.cnYear << lunar.cnMonth << lunar.cnDay << "[";
+    cout << gz->gzYear<< "年" << gz->gzMonth <<"月"<< gz->gzDay<<"日]"<< endl;
     delete cndays;
 }
