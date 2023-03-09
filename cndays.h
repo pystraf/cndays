@@ -9,6 +9,7 @@ qq:1176708259。我收到信息后立即删除本博。谢谢！
 #include <string>
 #include <math.h>
 #include <iostream>
+#include <ctime>
 // 来自网络的即说是天文观测数据。大意：
 // 0~4 共5bit 春节日份
 // 5~6 共2bit 春节月份
@@ -182,4 +183,6 @@ protected:
     Date DaysToDate(int ndays); // 将GetDays24()函数返回值转换成月日
 
     cnDate GetLunarPart(int yyyy, int mm, int dd); // 公历转农历
+
+    int *GetNow();
 };

@@ -34,9 +34,10 @@ cnDate CCnDays::GetLunar(int yyyy, int mm, int dd)
 
         };
 
-    lunar.cnYear = tg[(lunar.year - 1864) % 10];                  // 天干
-    lunar.cnYear += dz[(lunar.year - 1864) % 12];                 // 地支
-    lunar.cnYear += "【" + sx[(lunar.year - 1900) % 12] + "】年"; // 生肖
+    lunar.cnYear = tg[(lunar.year - 1864) % 10];  // 天干
+    lunar.cnYear += dz[(lunar.year - 1864) % 12]; // 地支
+    // lunar.cnYear += "【" + sx[(lunar.year - 1900) % 12] + "】年"; // 生肖
+    lunar.cnYear += "年"; // 生肖
 
     // 格成农历月
     if (lunar.leap)
@@ -440,10 +441,36 @@ int CCnDays::GetDaysOfMonth(int year, int month)
     return DaysOfMonth[month];
 }
 
-int main()
+int *GetNow()
+{
+    time_t now;
+    time(&now);
+    tm *t = localtime(&now);
+    int *res = (int *)malloc(3 * sizeof(int));
+    res[0] = t->tm_year + 1900;
+    res[1] = t->tm_mon + 1;
+    res[2] = t->tm_mday;
+    return res;
+}
+
+int main(int argc, char **argv)
 {
     CCnDays *cndays = new CCnDays;
-    structDate lunar = cndays->GetLunar(2023, 3, 8);
+    int year = 0, month = 0, day = 0;
+    if (argc == 4)
+    {
+        year = atoi(argv[1]);
+        month = atoi(argv[2]);
+        day = atoi(argv[3]);
+    }
+    else
+    {
+        int *today = GetNow();
+        year = today[0];
+        month = today[1];
+        day = today[2];
+    }
+    structDate lunar = cndays->GetLunar(year, month, day);
     cout << lunar.cnYear << lunar.cnMonth << lunar.cnDay;
     delete cndays;
 }
