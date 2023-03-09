@@ -1,15 +1,11 @@
 ﻿#pragma once
-/*头文件：cndays.h;对应的实现文件：cndays.cpp
-本文件的实现，参考自多地个地方。我也记不清，如果你觉得
-对你的著作权有损，请联系我需要我删除的请联系我：wx:domics
-qq:1176708259。我收到信息后立即删除本博。谢谢！
-如果没意见的话，就共大家分享吧！感激！*/
 
 #include <tchar.h>
 #include <string>
 #include <math.h>
 #include <iostream>
 #include <ctime>
+
 // 来自网络的即说是天文观测数据。大意：
 // 0~4 共5bit 春节日份
 // 5~6 共2bit 春节月份
