@@ -78,7 +78,7 @@ static const unsigned int BaseData[199] = {
 
 };
 
-typedef struct structGanZhiDate 
+typedef struct structGanZhiDate
 {
     string gzYear = "";
     string gzMonth = "";
@@ -153,7 +153,9 @@ public:
 
     bool IsLeapYear(int year); // 判断给定的年份是不是闰年
 
-    gzDate* GetGanzhiFormat(Date _cnDate); 
+    gzDate *GetGanzhiFormat(Date _cnDate);
+
+    int *GetNow();
 
     string cn24Days[24] =
         {
@@ -198,10 +200,7 @@ protected:
 
     cnDate GetLunarPart(int yyyy, int mm, int dd); // 公历转农历
 
-    int *GetNow();
-
-    int* GetMonthGZ(Date pDate);
-    int* GetDayGZ(Date pDate);
-
-    
+    int *GetMonthGZ(Date pDate);
+    int *GetDayGZ(Date pDate);
+    int *GetHourGZ(int *day);
 };

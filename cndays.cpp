@@ -449,13 +449,14 @@ int CCnDays::GetDaysOfMonth(int year, int month)
 若言戊癸何方发，
 甲寅之上好追求。
 */
-int* CCnDays::GetMonthGZ(Date pDate) {
+int *CCnDays::GetMonthGZ(Date pDate)
+{
     string cnYear = pDate.cnYear;
-    string cnYearGan = cnYear.substr(0, 3); //汉字是unicode编码，宽度为3
+    string cnYearGan = cnYear.substr(0, 3); // 汉字是unicode编码，宽度为3
     int pos = TIANGAN.find(cnYearGan);
-    pos /= 3; //unicode 宽度
-    //天干年月对应表，年份为天干，从0开始计数
-    int _m = pDate.month; //农历二月
+    pos /= 3; // unicode 宽度
+    // 天干年月对应表，年份为天干，从0开始计数
+    int _m = pDate.month; // 农历二月
     int map[10] = {
         2,
         4,
@@ -466,56 +467,77 @@ int* CCnDays::GetMonthGZ(Date pDate) {
         4,
         6,
         8,
-        0
-    };
+        0};
     int g_month_index = map[pos] + _m - 1;
     int z_month = pDate.month + 2 % 12 - 1;
-    int * ret = (int*)malloc(2*sizeof(int));
+    int *ret = (int *)malloc(2 * sizeof(int));
     ret[0] = g_month_index;
     ret[1] = z_month;
     return ret;
 }
 
-int* CCnDays::GetDayGZ(Date date)
+int *CCnDays::GetDayGZ(Date date)
 {
     int year = date.year;
-    int temp = ((year - 1)*5 + (year-1) / 4 + 31+ 28 + 9 )%60;
+    int temp = ((year - 1) * 5 + (year - 1) / 4 + 31 + 28 + 9) % 60;
     int gan = temp % 10;
     int zhi = temp % 12;
-    int *res = (int*)malloc(2*sizeof(int));
+    int *res = (int *)malloc(2 * sizeof(int));
     res[0] = gan - 1;
     res[1] = zhi - 1;
     return res;
 }
 
-gzDate* CCnDays::GetGanzhiFormat(Date date)
+int *CCnDays::GetHourGZ(int *day)
+{
+    int *now = CCnDays::GetNow();
+    int hour = now[3];
+    hour = round((float)(20 + 1) / 2);
+    int gan = day[0];
+    int g_hour = (gan % 5 * 2 + 1 + hour - 1) % 10 - 1;
+    int z_hour = hour - 1;
+    int *res = (int *)malloc(2 * sizeof(int));
+    res[0] = g_hour;
+    res[1] = z_hour;
+    return res;
+}
+
+gzDate *CCnDays::GetGanzhiFormat(Date date)
 {
     gzDate *gz = new gzDate;
-    int* m = GetMonthGZ(date);
+    int *m = GetMonthGZ(date);
     int mgan = m[0];
     int mzhi = m[1];
     string smgan = TIANGAN.substr(mgan * 3, 3);
     string smzhi = DIZHI.substr(mzhi * 3, 3);
-    int* d = GetDayGZ(date);
+    int *d = GetDayGZ(date);
     int dgan = d[0];
     int dzhi = d[1];
     string sdgan = TIANGAN.substr(dgan * 3, 3);
     string sdzhi = DIZHI.substr(dzhi * 3, 3);
+    int *h = GetHourGZ(d);
+    int hgan = h[0];
+    int hzhi = h[1];
+    cout << "hgan:" << hzhi << endl;
+    string shgan = TIANGAN.substr(hgan * 3, 3);
+    string shzhi = DIZHI.substr(hzhi * 3, 3);
     gz->gzYear = date.cnYear.substr(0, 6);
     gz->gzMonth = smgan + smzhi;
     gz->gzDay = sdgan + sdzhi;
+    gz->gzHour = shgan + shzhi;
     return gz;
 }
 
-int *GetNow()
+int *CCnDays::GetNow()
 {
     time_t now;
     time(&now);
     tm *t = localtime(&now);
-    int *res = (int *)malloc(3 * sizeof(int));
+    int *res = (int *)malloc(4 * sizeof(int));
     res[0] = t->tm_year + 1900;
     res[1] = t->tm_mon + 1;
     res[2] = t->tm_mday;
+    res[3] = t->tm_hour;
     return res;
 }
 
@@ -531,7 +553,7 @@ int main(int argc, char **argv)
     }
     else
     {
-        int *today = GetNow();
+        int *today = cndays->GetNow();
         year = today[0];
         month = today[1];
         day = today[2];
@@ -539,6 +561,6 @@ int main(int argc, char **argv)
     cnDate lunar = cndays->GetLunar(year, month, day);
     gzDate *gz = cndays->GetGanzhiFormat(lunar);
     cout << lunar.cnYear << lunar.cnMonth << lunar.cnDay << "[";
-    cout << gz->gzYear<< "年" << gz->gzMonth <<"月"<< gz->gzDay<<"日]"<< endl;
+    cout << gz->gzYear << "年" << gz->gzMonth << "月" << gz->gzDay << "日" << gz->gzHour << "时]" << endl;
     delete cndays;
 }
