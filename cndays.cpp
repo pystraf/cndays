@@ -516,7 +516,6 @@ gzDate *CCnDays::GetGanzhiFormat(Date date)
 {
     gzDate *gz = new gzDate;
     int *m = GetMonthGZ(date);
-    cout << "month:" << m[0] << endl;
     int mgan = m[0];
     int mzhi = m[1];
     string smgan = TIANGAN.substr(mgan * 3, 3);
@@ -529,7 +528,6 @@ gzDate *CCnDays::GetGanzhiFormat(Date date)
     int *h = GetHourGZ(d);
     int hgan = h[0];
     int hzhi = h[1];
-    cout << "hgan:" << hzhi << endl;
     string shgan = TIANGAN.substr(hgan * 3, 3);
     string shzhi = DIZHI.substr(hzhi * 3, 3);
     gz->gzYear = date.cnYear.substr(0, 6);
@@ -554,31 +552,4 @@ int *CCnDays::GetNow()
     return res;
 }
 
-int main(int argc, char **argv)
-{
-    CCnDays *cndays = new CCnDays;
-    int year = 0, month = 0, day = 0, hour, min, sec;
-    if (argc == 4)
-    {
-        year = atoi(argv[1]);
-        month = atoi(argv[2]);
-        day = atoi(argv[3]);
-    }
-    else
-    {
-        int *today = cndays->GetNow();
-        year = today[0];
-        month = today[1];
-        day = today[2];
-        hour = today[3];
-        min = today[4];
-        sec = today[5];
-    }
-    year = 1996, month = 1, day = 16;
-    cnDate lunar = cndays->GetLunar(year, month, day);
-    gzDate *gz = cndays->GetGanzhiFormat(lunar);
-    cout << year << "-" << month << "-" << day << " " << hour << ":" << min << ":" << sec << " ";
-    cout << lunar.cnYear << lunar.cnMonth << lunar.cnDay << "[";
-    cout << gz->gzYear << "年" << gz->gzMonth << "月" << gz->gzDay << "日" << gz->gzHour << "时]" << endl;
-    delete cndays;
-}
+
